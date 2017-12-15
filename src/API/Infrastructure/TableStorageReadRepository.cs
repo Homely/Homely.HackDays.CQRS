@@ -3,6 +3,7 @@ using API.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 
 namespace API.Infrastructure
 {
@@ -24,7 +25,8 @@ namespace API.Infrastructure
         {
             var retrievedResult =
                 await _db.ExecuteAsync(TableOperation.Retrieve<QuestionTableRecord>(id.ToString(), id.ToString()));
-            var questionModel = retrievedResult?.Result as QuestionModel;
+            var questionJson = retrievedResult?.Result as QuestionTableRecord;
+            var questionModel = JsonConvert.DeserializeObject<QuestionModel>(questionJson.JsonData);
             return questionModel;
         }
     }

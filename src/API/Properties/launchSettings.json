@@ -10,8 +10,8 @@
   "profiles": {
     "Kestrel": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "api/questions/5",
+      "launchBrowser": false,
+      "launchUrl": "api/questions/1",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
