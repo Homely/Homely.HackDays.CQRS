@@ -1,0 +1,40 @@
+﻿using System.Threading.Tasks;
+using API.Domain;
+using API.Models;
+using Domain.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+
+namespace API.Infrastructure
+{
+    public class TableStorageReadRepository : IReadRepository
+    {
+        private readonly CloudTable _db;
+
+        public TableStorageReadRepository(IConfiguration configuration)
+        {
+            var azureConnectionString = configuration.GetValue<string>("Azure:ConnectionString");
+            var storageAccount = CloudStorageAccount.Parse(azureConnectionString);
+            var tableClient = storageAccount.CreateCloudTableClient();
+            var table = tableClient.GetTableReference(configuration.GetValue<string>("Azure:QuestionsTableName"));
+            table.CreateIfNotExistsAsync().GetAwaiter().GetResult();
+            _db = table;
+        }
+
+        public Task<Question> GetAsync(int id)
+        {
+            // TODO: Read from seperate table storage/db.
+            var question = new Question("Best coffee in Melbourne?", new User("Ryan", "ryan@homely.com.au")) {Id = id};
+            return Task.FromResult(question);
+        }
+
+        public async Task<QuestionModel> GetSummaryAsync(int id)
+        {
+            var retrievedResult =
+                await _db.ExecuteAsync(TableOperation.Retrieve<QuestionTableRecord>(id.ToString(), id.ToString()));
+            var questionModel = retrievedResult?.Result as QuestionModel;
+            return questionModel;
+        }
+    }
+}
