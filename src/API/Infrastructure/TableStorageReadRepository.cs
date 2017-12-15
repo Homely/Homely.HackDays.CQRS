@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
-using API.Domain;
 using API.Models;
-using Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -21,14 +19,7 @@ namespace API.Infrastructure
             table.CreateIfNotExistsAsync().GetAwaiter().GetResult();
             _db = table;
         }
-
-        public Task<Question> GetAsync(int id)
-        {
-            // TODO: Read from seperate table storage/db.
-            var question = new Question("Best coffee in Melbourne?", new User("Ryan", "ryan@homely.com.au")) {Id = id};
-            return Task.FromResult(question);
-        }
-
+        
         public async Task<QuestionModel> GetSummaryAsync(int id)
         {
             var retrievedResult =

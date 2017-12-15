@@ -17,7 +17,7 @@ namespace API.Domain
         public User UserWhoAsked { get; }
         public List<Answer> Answers { get; }
 
-        public void Answer(Answer answer)
+        public void AddAnswer(Answer answer)
         {
             answer.Validate();
             Answers.Add(answer);

@@ -15,7 +15,6 @@ namespace API.Handlers
     {
         private readonly CloudQueue _queue;
         private readonly IWriteRepository _writeRepository;
-        private readonly IReadRepository _readRepository;
 
         public QuestionAnsweredHandler(IConfiguration configuration, IWriteRepository writeRepository,
             IReadRepository readRepository)
@@ -28,7 +27,6 @@ namespace API.Handlers
             _queue.CreateIfNotExistsAsync().GetAwaiter().GetResult();
 
             _writeRepository = writeRepository;
-            _readRepository = readRepository;
         }
 
         protected override async Task<int> HandleCore(AnswerQuestionCommand request)
@@ -36,7 +34,7 @@ namespace API.Handlers
             // TODO: Log.
 
             // Get question.
-            var question = await _readRepository.GetAsync(request.QuestionId);
+            var question = await _writeRepository.GetAsync(request.QuestionId);
 
             // TODO: this should come from auth credentials.
             var user = new User("Bob Cobb", "bob@cobb.com");
@@ -45,7 +43,7 @@ namespace API.Handlers
 
             // Add answer.
             var answer = new Answer(request.Content, user);
-            question.Answer(answer);
+            question.AddAnswer(answer);
 
             // Save.
             await _writeRepository.SaveAsync(question);
